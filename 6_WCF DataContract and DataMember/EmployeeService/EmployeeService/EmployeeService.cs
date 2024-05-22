@@ -15,7 +15,7 @@ namespace EmployeeService
     {
         public Employee GetEmployee(int Id)
         {
-            Employee employee = new Employee();
+            Employee employee = null;
             string cs = ConfigurationManager.ConnectionStrings["DBCS"].ConnectionString;
             using (SqlConnection con = new SqlConnection(cs))
             {
@@ -31,10 +31,31 @@ namespace EmployeeService
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    employee.Id = Convert.ToInt32(reader["Id"]);
-                    employee.Name = reader["Name"].ToString();
-                    employee.Gender = reader["Gender"].ToString();
-                    employee.DateOfBirth = Convert.ToDateTime(reader["DateOfBirth"]);
+                    if ((EmployeeType)reader["EmployeeType"] == EmployeeType.FullTimeEmployee)
+                    {
+                        employee = new FullTimeEmployee()
+                        {
+                            Id = Convert.ToInt32(reader["Id"]),
+                            Name = reader["Name"].ToString(),
+                            Gender = reader["Gender"].ToString(),
+                            DateOfBirth = Convert.ToDateTime(reader["DateOfBirth"]),
+                            AnnualSalary = Convert.ToInt32(reader["AnnualSalary"]),
+                            EmployeeType = EmployeeType.FullTimeEmployee
+                        };
+                    }
+                    else
+                    {
+                        employee = new PartTimeEmployee()
+                        {
+                            Id = Convert.ToInt32(reader["Id"]),
+                            Name = reader["Name"].ToString(),
+                            Gender = reader["Gender"].ToString(),
+                            DateOfBirth = Convert.ToDateTime(reader["DateOfBirth"]),
+                            HourlyPay = Convert.ToInt32(reader["HourlyPay"]),
+                            HoursWorked = Convert.ToInt32(reader["HoursWorked"]),
+                            EmployeeType = EmployeeType.PartTimeEmployee
+                        };
+                    }
                 }
             }
             return employee;
@@ -67,6 +88,31 @@ namespace EmployeeService
                 parameterDateOfBirth.ParameterName = "@DateOfBirth";
                 parameterDateOfBirth.Value = employee.DateOfBirth;
                 cmd.Parameters.Add(parameterDateOfBirth);
+
+                SqlParameter parameterEmployeeType = new SqlParameter();
+                parameterEmployeeType.ParameterName = "@EmployeeType";
+                parameterEmployeeType.Value = employee.EmployeeType;
+                cmd.Parameters.Add(parameterEmployeeType);
+
+                if (employee.GetType() == typeof(FullTimeEmployee))
+                {
+                    SqlParameter parameterAnnualSalary = new SqlParameter();
+                    parameterAnnualSalary.ParameterName = "@AnnualSalary";
+                    parameterAnnualSalary.Value = ((FullTimeEmployee)employee).AnnualSalary;
+                    cmd.Parameters.Add(parameterAnnualSalary);
+                }
+                else if (employee.GetType() == typeof(PartTimeEmployee))
+                {
+                    SqlParameter parameterHourlyPay = new SqlParameter();
+                    parameterHourlyPay.ParameterName = "@HourlyPay";
+                    parameterHourlyPay.Value = ((PartTimeEmployee)employee).HourlyPay;
+                    cmd.Parameters.Add(parameterHourlyPay);
+
+                    SqlParameter parameterHoursWorked = new SqlParameter();
+                    parameterHoursWorked.ParameterName = "@HoursWorked";
+                    parameterHoursWorked.Value = ((PartTimeEmployee)employee).HoursWorked;
+                    cmd.Parameters.Add(parameterHoursWorked);
+                }
 
                 con.Open();
                 cmd.ExecuteNonQuery();

@@ -7,15 +7,18 @@ using System.Threading.Tasks;
 
 namespace EmployeeService
 {
-    [DataContract(Namespace = "http://pragimtech.com/2013/07/07/Employee")]
+    [KnownType(typeof(FullTimeEmployee))]
+    [KnownType(typeof(PartTimeEmployee))]
+    [DataContract(Namespace = "http://pragimtech.com/Employee")]
     public class Employee
     {
         private int _id;
         private string _name;
         private string _gender;
         private DateTime _dateOfBirth;
+        private EmployeeType employeeType;
 
-        [DataMember(Name = "ID", Order = 0)]
+        [DataMember(Order = 0)]
         public int Id
         {
             get { return _id; }
@@ -41,6 +44,13 @@ namespace EmployeeService
         {
             get { return _dateOfBirth; }
             set { _dateOfBirth = value; }
+        }
+
+        [DataMember(Order = 4)]
+        public EmployeeType EmployeeType
+        {
+            get => employeeType;
+            set => employeeType = value;
         }
     }
 }
