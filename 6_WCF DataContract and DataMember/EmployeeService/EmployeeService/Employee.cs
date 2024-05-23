@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace EmployeeService
 {
-    [KnownType(typeof(FullTimeEmployee))]
-    [KnownType(typeof(PartTimeEmployee))]
+    //[KnownType(typeof(FullTimeEmployee))]
+    //[KnownType(typeof(PartTimeEmployee))]
     [DataContract(Namespace = "http://pragimtech.com/Employee")]
     public class Employee
     {
