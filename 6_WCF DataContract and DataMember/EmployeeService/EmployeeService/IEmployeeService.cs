@@ -12,12 +12,9 @@ namespace EmployeeService
     public interface IEmployeeService
     {
         [OperationContract]
-        Employee GetEmployee(int Id);
+        EmployeeInfo GetEmployee(EmployeeRequest request);
 
         [OperationContract]
-        void SaveEmployee(Employee employee);
-
-        [OperationContract]
-        void DeleteEmployee(int Id);
+        void SaveEmployee(EmployeeInfo info);
     }
 }
